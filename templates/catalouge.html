@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ shop_name or "Shop Catalogue" }}</title>
+
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <h1 class="title">{{ shop_name or "Product Catalogue" }}</h1>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <input type="text" id="searchInput" placeholder="Search products...">
+    </div>
+
+    <!-- Product Grid -->
+    <div id="productGrid" class="grid">
+        
+        {% for p in products %}
+            <div class="card">
+                <img src="{{ p.image_url }}" alt="{{ p.name }}">
+
+                <div class="product-name">{{ p.name }}</div>
+
+                <div class="price">₹{{ p.selling_price }}</div>
+
+                {% if p.stock_quantity < 1 %}
+                    <div class="out-of-stock">Out of Stock</div>
+                {% endif %}
+            </div>
+        {% endfor %}
+
+    </div>
+
+    <script>
+        // Simple search (works on the rendered HTML)
+        const searchInput = document.getElementById("searchInput");
+        const cards = document.querySelectorAll(".card");
+
+        searchInput.addEventListener("input", function() {
+            const term = this.value.toLowerCase();
+
+            cards.forEach(card => {
+                const name = card.querySelector(".product-name").innerText.toLowerCase();
+                card.style.display = name.includes(term) ? "" : "none";
+            });
+        });
+    </script>
+
+</body>
+</html>

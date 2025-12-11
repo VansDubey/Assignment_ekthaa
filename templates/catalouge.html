@@ -2,53 +2,130 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ shop_name or "Shop Catalogue" }}</title>
-
-    <link rel="stylesheet" href="/static/styles.css">
+    <title>Ekthaa</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 
 <body>
-    <h1 class="title">{{ shop_name or "Product Catalogue" }}</h1>
 
-    <!-- Search Bar -->
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search products...">
-    </div>
+    <!-- HEADER -->
+    <header class="header">
+        <div class="logo">EKTHAA</div>
 
-    <!-- Product Grid -->
-    <div id="productGrid" class="grid">
+        <div class="search-box">
+    <form action="/search" method="GET" class="search-form">
+        <input type="text" name="query" placeholder="Search for products..." required>
+        <button type="submit" class="search-btn">Search</button>
+    </form>
+</div>
+
+
+        <div class="user-info">
+            <img src="{{ url_for('static', filename='images/profile.jpg') }}" alt="Profile">
+            <a href="#">Cart</a>
+            <a href="#">Orders</a>
+        </div>
+    </header>
+
+    <!-- MAIN LAYOUT -->
+    <div class="layout">
         
-        {% for p in products %}
-            <div class="card">
-                <img src="{{ p.image_url }}" alt="{{ p.name }}">
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <h3 class="sidebar-title">Categories</h3>
+           <ul id="categoryList">
+    <li data-cat="All">All</li>
+    <li data-cat="Foot Wear">Foot Wear</li>
+    <li data-cat="Watches">Watches</li>
+    <li data-cat="Traditional Wear">Traditional Wear</li>
+    <li data-cat="Western Wear">Western Wear</li>
+    <li data-cat="Swim & Beachwear">Swim & Beachwear</li>
+    <li data-cat="Winter & Seasonal Wear">Winter & Seasonal Wear</li>
+    <li data-cat="Beauty & Grooming">Beauty & Grooming</li>
+    <li data-cat="Jewellery">Jewellery</li>
+    <li data-cat="Personal Care">Personal Care</li>
+    <li data-cat="International Brands">International Brands</li>
+    <li data-cat="Accessories">Accessories</li>
+</ul>
 
-                <div class="product-name">{{ p.name }}</div>
+        </aside>
 
-                <div class="price">₹{{ p.selling_price }}</div>
+        <!-- MAIN CONTENT -->
+        <main class="main">
 
-                {% if p.stock_quantity < 1 %}
-                    <div class="out-of-stock">Out of Stock</div>
-                {% endif %}
-            </div>
-        {% endfor %}
+            <!-- HERO BANNER -->
+            <section class="hero">
+                <div class="hero-content">
+                    <h2>Biggest Offer Revealed</h2>
+                    <h1>UP TO <span>50% OFF</span> — LIMITED TIME DEALS</h1>
+                </div>
+            </section>
 
+            <!-- DEALS SECTION -->
+            <section class="deals-of-day">
+                <div class="section-header">
+                    <h2>🔥 Deals of the Day</h2>
+                    <a href="/add-product" class="add-product-btn">+ Add Product</a>
+                </div>
+
+<div class="products">
+    {% for product in deals %}
+        {% if product.is_visible_in_catalogue %}
+        <div class="product-card" data-category="{{ product.category }}">
+
+            <div class="category-tag">{{ product.category }}</div>
+
+            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+
+            <h3 class="product-name">{{ product.name }}</h3>
+
+            {% if product.sku %}
+            <p><strong>SKU:</strong> {{ product.sku }}</p>
+            {% endif %}
+
+            <p><strong>Cost Price:</strong> ₹{{ product.cost_price }}</p>
+            <p><strong>Selling Price:</strong> ₹{{ product.selling_price }}</p>
+            <p><strong>Stock:</strong> {{ product.stock_quantity }}</p>
+
+            <p class="description"><strong>Description:</strong> {{ product.description }}</p>
+
+        </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+            </section>
+
+        </main>
     </div>
 
     <script>
-        // Simple search (works on the rendered HTML)
-        const searchInput = document.getElementById("searchInput");
-        const cards = document.querySelectorAll(".card");
+document.querySelectorAll("#categoryList li").forEach(item => {
+    item.addEventListener("click", () => {
+        const selected = item.getAttribute("data-cat");
+        const cards = document.querySelectorAll(".product-card");
 
-        searchInput.addEventListener("input", function() {
-            const term = this.value.toLowerCase();
+        cards.forEach(card => {
+            const category = card.getAttribute("data-category");
 
-            cards.forEach(card => {
-                const name = card.querySelector(".product-name").innerText.toLowerCase();
-                card.style.display = name.includes(term) ? "" : "none";
-            });
+            if (selected === "All" || category === selected) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
         });
-    </script>
+
+        // Highlight selected category
+        document.querySelectorAll("#categoryList li").forEach(li => li.classList.remove("active-category"));
+        item.classList.add("active-category");
+    });
+});
+</script>
+
+
+
+
+    
 
 </body>
 </html>

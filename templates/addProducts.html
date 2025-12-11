@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Product</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='addProduct.css') }}">
+</head>
+
+<body>
+
+<div class="container">
+    <h1 class="title">🛍️ Add New Product</h1>
+    <p class="subtitle">Fill in the details below to add a new item to your store.</p>
+
+    <form id="productForm" class="product-form">
+
+        <div class="form-group">
+            <label>Shop ID</label>
+            <input type="text" name="shop_id" required>
+        </div>
+
+        <div class="form-group">
+            <label>Product Name</label>
+            <input type="text" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label>SKU (optional)</label>
+            <input type="text" name="sku">
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label>Cost Price</label>
+                <input type="number" name="cost_price" required>
+            </div>
+
+            <div class="form-group">
+                <label>Selling Price</label>
+                <input type="number" name="selling_price" required>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Stock Quantity</label>
+            <input type="number" name="stock_quantity" required>
+        </div>
+
+        <div class="form-group">
+    <label>Category</label>
+    <select name="category" required>
+        <option value="">-- Select Category --</option>
+        <option value="Traditional Wear">Traditional Wear</option>
+        <option value="Western Wear">Western Wear</option>
+        <option value="Swim & Beachwear">Swim & Beachwear</option>
+        <option value="Winter & Seasonal Wear">Winter & Seasonal Wear</option>
+        <option value="Beauty & Grooming">Beauty & Grooming</option>
+        <option value="Jewellery">Jewellery</option>
+        <option value="Personal Care">Personal Care</option>
+        <option value="International Brands">International Brands</option>
+        <option value="Foot Wear">Foot Wear</option>
+        <option value="Watches">Watches</option>
+        <option value="Accessories">Accessories</option>
+        <option value="Accessories">Groceries</option>
+
+    </select>
+</div>
+
+
+        <div class="form-group">
+            <label>Description</label>
+            <textarea name="description" required></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Product Image URL</label>
+            <input type="text" name="image_url" required>
+        </div>
+
+        <div class="form-group">
+            <label>Show in Catalogue?</label>
+            <select name="is_visible_in_catalogue">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-primary">Add Product</button>
+
+    </form>
+</div>
+
+
+<script>
+document.getElementById("productForm").addEventListener("submit", async function(e) {
+    e.preventDefault(); // stop normal form submit
+
+    const form = e.target;
+
+    const data = {
+        shop_id: form.shop_id.value,
+        name: form.name.value,
+        sku: form.sku.value,
+        cost_price: Number(form.cost_price.value),
+        selling_price: Number(form.selling_price.value),
+        stock_quantity: Number(form.stock_quantity.value),
+        description: form.description.value,
+        image_url: form.image_url.value,
+        is_visible_in_catalogue: form.is_visible_in_catalogue.value === "true"
+    };
+
+    const response = await fetch("/add-product", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    });
+
+    const result = await response.json();
+    console.log(result);
+
+    
+    alert("Product Added Successfully!");
+    window.location.href = "/";
+
+});
+</script>
+
+</body>
+</html>
